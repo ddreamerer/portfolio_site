@@ -19,7 +19,7 @@
       --text-secondary: #b3aa9c;
       --accent-glow: #dbbd9e;
       --accent-glow-soft: rgba(219, 189, 158, 0.15);
-      --card-bg: rgba(20, 24, 30, 0.6);
+      --card-bg: rgba(20, 24, 30, 0.7);
       --border-subtle: rgba(255, 215, 150, 0.08);
       --btn-primary-bg: #dbbd9e;
       --btn-primary-text: #12161c;
@@ -34,7 +34,7 @@
       --text-secondary: #4a443c;
       --accent-glow: #b58f6e;
       --accent-glow-soft: rgba(181, 143, 110, 0.2);
-      --card-bg: rgba(240, 234, 226, 0.7);
+      --card-bg: rgba(240, 234, 226, 0.85);
       --border-subtle: rgba(120, 90, 60, 0.12);
       --btn-primary-bg: #b58f6e;
       --btn-primary-text: #f5f0ea;
@@ -50,7 +50,9 @@
     }
 
     body {
-      background-color: var(--bg-primary);
+      background: linear-gradient(rgba(11, 13, 16, 0.8), rgba(11, 13, 16, 0.8)),
+                  url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920') no-repeat center center fixed;
+      background-size: cover;
       color: var(--text-primary);
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
@@ -58,10 +60,63 @@
       line-height: 1.5;
       padding: 20px;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    [data-theme="light"] body {
+      background: linear-gradient(rgba(245, 240, 234, 0.85), rgba(245, 240, 234, 0.85)),
+                  url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920') no-repeat center center fixed;
+      background-size: cover;
     }
 
     .scanlines {
       display: none;
+    }
+
+    /* ===== ЗВЁЗДЫ (кликабельные, падают) ===== */
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(255, 215, 150, 0.7), 0 0 30px rgba(255, 215, 150, 0.3);
+      pointer-events: auto;
+      cursor: none;
+      transition: transform 0.15s, text-shadow 0.15s;
+      will-change: transform, top, left;
+      user-select: none;
+      line-height: 1;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .star:hover {
+      transform: scale(1.3);
+      text-shadow: 0 0 20px rgba(255, 215, 150, 0.9), 0 0 50px rgba(255, 215, 150, 0.5);
+    }
+
+    .star.falling {
+      animation: starFall 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes starFall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg) scale(0.2);
+      }
     }
 
     /* ===== КАСТОМНЫЙ КУРСОР ===== */
@@ -178,6 +233,8 @@
     main {
       max-width: 1100px;
       margin: 0 auto;
+      position: relative;
+      z-index: 5;
     }
 
     /* ===== HERO ===== */
@@ -686,6 +743,9 @@
   <!-- Кастомный курсор -->
   <div class="custom-cursor" id="customCursor"></div>
 
+  <!-- Контейнер для звёзд (кликабельные) -->
+  <div class="stars-container" id="starsContainer"></div>
+
   <!-- Контейнер для блёсток -->
   <div class="sparkle-container" id="sparkleContainer"></div>
 
@@ -912,12 +972,52 @@
 
         if (isOpen) {
           toggleBtn.innerHTML = '<span class="icon">⏹</span> СКРЫТЬ';
-          // Автозапуск не делаем, чтобы пользователь сам нажал play
         } else {
           toggleBtn.innerHTML = '<span class="icon">🎵</span> МОЯ ПЕСНЯ';
-          audio.pause(); // останавливаем, если играло
+          audio.pause();
         }
       });
+    })();
+
+    // ===== ЗВЁЗДЫ: 65 штук, падают в 2 раза медленнее (1.8с) =====
+    (function() {
+      const container = document.getElementById('starsContainer');
+      const starCount = 65;
+
+      // Функция создания новой звезды
+      function createStar() {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.textContent = '★';
+        const size = 14 + Math.random() * 22;
+        star.style.fontSize = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        const hue = 40 + Math.random() * 20;
+        star.style.color = `hsl(${hue}, 80%, 80%)`;
+        star.style.textShadow = `0 0 12px hsla(${hue}, 80%, 70%, 0.7), 0 0 30px hsla(${hue}, 80%, 70%, 0.3)`;
+        return star;
+      }
+
+      // Обработчик клика — падение и пересоздание
+      function handleStarClick(e) {
+        const star = e.target;
+        if (star.classList.contains('falling')) return;
+        star.classList.add('falling');
+        setTimeout(() => {
+          star.remove();
+          const newStar = createStar();
+          newStar.addEventListener('click', handleStarClick);
+          container.appendChild(newStar);
+        }, 1850); // чуть больше длительности анимации (1.8с)
+      }
+
+      // Создаём начальные звёзды
+      for (let i = 0; i < starCount; i++) {
+        const star = createStar();
+        star.addEventListener('click', handleStarClick);
+        container.appendChild(star);
+      }
     })();
   </script>
 </body>
