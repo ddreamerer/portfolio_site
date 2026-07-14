@@ -461,7 +461,7 @@
       border-bottom-color: var(--accent-glow);
     }
 
-    /* ===== СЕКЦИЯ "ЛЮБЛЮ" (обновлённая) ===== */
+    /* ===== СЕКЦИЯ "ЛЮБЛЮ" ===== */
     .love-content {
       display: flex;
       flex-direction: column;
@@ -482,22 +482,100 @@
       margin: 2px 0 6px 0;
     }
 
-    .love-image {
-      max-width: 160px;
+    .love-image-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
       border-radius: 24px;
+      overflow: hidden;
       border: 1px solid var(--border-subtle);
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      transition: transform 0.2s;
+      flex-shrink: 0;
     }
 
-    .love-image:hover {
-      transform: scale(1.02);
+    .love-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     @media (max-width: 600px) {
-      .love-image {
-        max-width: 130px;
+      .love-image-wrapper {
+        width: 130px;
+        height: 130px;
       }
+    }
+
+    /* ===== БЛОК "МОЯ ПЕСНЯ" ===== */
+    .song-block {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      padding: 20px 24px 30px;
+      background: var(--card-bg);
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+    }
+
+    .song-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 40px;
+      border-radius: 60px;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, var(--accent-glow), #c6a889);
+      color: var(--btn-primary-text);
+      border: none;
+      cursor: none;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(219, 189, 158, 0.15);
+    }
+
+    .song-toggle:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 50px rgba(219, 189, 158, 0.3);
+    }
+
+    .song-toggle .icon {
+      font-size: 1.4rem;
+    }
+
+    .song-player-wrapper {
+      max-width: 560px;
+      margin: 20px auto 0;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.5s ease;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+      padding: 0 16px;
+    }
+
+    .song-player-wrapper.open {
+      max-height: 300px;
+      opacity: 1;
+      transform: translateY(0);
+      padding: 16px 16px 20px;
+    }
+
+    .song-player-wrapper audio {
+      width: 100%;
+      border-radius: 12px;
+      background: transparent;
+    }
+
+    .song-player-wrapper audio::-webkit-media-controls-panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
     }
 
     .site-footer {
@@ -537,6 +615,13 @@
       .section {
         padding: 24px 16px 28px;
       }
+      .song-toggle {
+        padding: 12px 28px;
+        font-size: 1rem;
+      }
+      .song-player-wrapper audio {
+        height: 40px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -546,6 +631,10 @@
       }
       .btn {
         text-align: center;
+      }
+      .song-player-wrapper.open {
+        max-height: 200px;
+        padding: 12px 12px 16px;
       }
     }
 
@@ -693,7 +782,7 @@
       </div>
     </section>
 
-    <!-- СЕКЦИЯ "ЧТО Я ЛЮБЛЮ" (обновлённая) -->
+    <!-- СЕКЦИЯ "ЧТО Я ЛЮБЛЮ" -->
     <section id="love" class="section love">
       <div class="section-inner">
         <p class="eyebrow">Что я люблю</p>
@@ -701,7 +790,9 @@
         <div class="love-content">
           <div class="love-text">кушать яблочки</div>
           <div class="love-arrow-down">↓</div>
-          <img class="love-image" src="apple.jpg" alt="Яблоко" />
+          <div class="love-image-wrapper">
+            <img src="apple.jpg" alt="Яблоко" />
+          </div>
         </div>
       </div>
     </section>
@@ -714,6 +805,20 @@
       </div>
     </section>
   </main>
+
+  <!-- БЛОК "МОЯ ПЕСНЯ" с MP3-плеером -->
+  <div class="song-block" id="my-song">
+    <button class="song-toggle" id="songToggle">
+      <span class="icon">🎵</span>
+      МОЯ ПЕСНЯ
+    </button>
+    <div class="song-player-wrapper" id="songPlayerWrapper">
+      <audio controls preload="metadata">
+        <source src="You've No Choice.mp3" type="audio/mpeg" />
+        Ваш браузер не поддерживает аудио.
+      </audio>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <p>Дима · Минск</p>
@@ -752,7 +857,7 @@
       });
     })();
 
-    // ===== БЛЁСТКИ (одна частица, очень часто) =====
+    // ===== БЛЁСТКИ =====
     (function() {
       const container = document.getElementById('sparkleContainer');
       let lastTime = 0;
@@ -791,6 +896,27 @@
 
       window.addEventListener('beforeunload', () => {
         document.removeEventListener('mousemove', onMouseMove);
+      });
+    })();
+
+    // ===== ПЕРЕКЛЮЧЕНИЕ ПЛЕЕРА =====
+    (function() {
+      const toggleBtn = document.getElementById('songToggle');
+      const playerWrapper = document.getElementById('songPlayerWrapper');
+      const audio = playerWrapper.querySelector('audio');
+      let isOpen = false;
+
+      toggleBtn.addEventListener('click', () => {
+        isOpen = !isOpen;
+        playerWrapper.classList.toggle('open', isOpen);
+
+        if (isOpen) {
+          toggleBtn.innerHTML = '<span class="icon">⏹</span> СКРЫТЬ';
+          // Автозапуск не делаем, чтобы пользователь сам нажал play
+        } else {
+          toggleBtn.innerHTML = '<span class="icon">🎵</span> МОЯ ПЕСНЯ';
+          audio.pause(); // останавливаем, если играло
+        }
       });
     })();
   </script>
