@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дима — Портфолио</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --bg-primary: #0b0d10;
+      --bg-secondary: #12161c;
+      --text-primary: #eef2f6;
+      --text-secondary: #b3aa9c;
+      --accent-glow: #dbbd9e;
+      --accent-glow-soft: rgba(219, 189, 158, 0.15);
+      --card-bg: rgba(20, 24, 30, 0.6);
+      --border-subtle: rgba(255, 215, 150, 0.08);
+      --btn-primary-bg: #dbbd9e;
+      --btn-primary-text: #12161c;
+      --btn-ghost-border: rgba(255, 215, 150, 0.25);
+      --btn-ghost-text: #e7dccf;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f5f0ea;
+      --bg-secondary: #e8e0d6;
+      --text-primary: #1e1a16;
+      --text-secondary: #4a443c;
+      --accent-glow: #b58f6e;
+      --accent-glow-soft: rgba(181, 143, 110, 0.2);
+      --card-bg: rgba(240, 234, 226, 0.7);
+      --border-subtle: rgba(120, 90, 60, 0.12);
+      --btn-primary-bg: #b58f6e;
+      --btn-primary-text: #f5f0ea;
+      --btn-ghost-border: rgba(120, 90, 60, 0.25);
+      --btn-ghost-text: #2a241e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: none;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+      line-height: 1.5;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .scanlines {
+      display: none;
+    }
+
+    /* ===== КАСТОМНЫЙ КУРСОР ===== */
+    .custom-cursor {
+      position: fixed;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6e5, #f5d6b0);
+      box-shadow: 0 0 20px 4px rgba(219, 189, 158, 0.6), 0 0 40px 8px rgba(255, 215, 150, 0.2);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      transition: width 0.1s, height 0.1s;
+      will-change: transform, left, top;
+    }
+
+    /* ===== ШАПКА ===== */
+    .site-header {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 60px;
+      border: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent-glow), #c6a889);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      cursor: none;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav {
+      display: flex;
+      gap: 8px 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+      border-radius: 40px;
+      transition: 0.2s;
+      cursor: none;
+    }
+
+    .nav a:hover {
+      color: var(--text-primary);
+      background: var(--accent-glow-soft);
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 40px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      color: var(--text-secondary);
+      transition: 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-glow-soft);
+      color: var(--text-primary);
+    }
+
+    .theme-toggle__icon--moon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle__icon--moon {
+      display: block;
+    }
+    [data-theme="dark"] .theme-toggle__icon--sun {
+      display: none;
+    }
+    [data-theme="light"] .theme-toggle__icon--sun {
+      display: block;
+    }
+    [data-theme="light"] .theme-toggle__icon--moon {
+      display: none;
+    }
+
+    /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 30px 24px 50px;
+      background: var(--card-bg);
+      backdrop-filter: blur(4px);
+      border-radius: 48px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-base {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--accent-glow-soft), transparent 70%);
+      position: absolute;
+    }
+
+    .hero-sun {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow), rgba(219, 189, 158, 0.1));
+      filter: blur(40px);
+      opacity: 0.6;
+      position: absolute;
+    }
+
+    .hero-slash {
+      width: 2px;
+      height: 120px;
+      background: var(--accent-glow);
+      opacity: 0.15;
+      transform: rotate(25deg);
+      position: absolute;
+    }
+
+    .hero-ring {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 1px solid var(--accent-glow-soft);
+      position: absolute;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .brand {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 2.8rem;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent-glow), #c6a889);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .location__icon {
+      color: var(--accent-glow);
+    }
+
+    h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 2.4rem;
+      line-height: 1.2;
+      margin: 6px 0 2px;
+    }
+
+    .hero-lead {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 90%;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 20px;
+      margin-top: 10px;
+    }
+
+    /* ===== КНОПКИ ===== */
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.25s;
+      position: relative;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      box-shadow: 0 0 12px rgba(219, 189, 158, 0);
+      cursor: none;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 60px;
+      padding: 2px;
+      background: transparent;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      transition: 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      box-shadow: 0 0 20px rgba(219, 189, 158, 0.25), 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary::before {
+      background: linear-gradient(135deg, var(--accent-glow), rgba(255, 215, 150, 0.6), var(--accent-glow));
+      opacity: 0.3;
+      filter: blur(8px);
+      transition: 0.4s;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(219, 189, 158, 0.45), 0 0 80px rgba(219, 189, 158, 0.15);
+    }
+
+    .btn-primary:hover::before {
+      opacity: 0.7;
+      filter: blur(16px);
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--btn-ghost-border);
+      color: var(--btn-ghost-text);
+      background: rgba(20, 24, 30, 0.3);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 12px rgba(219, 189, 158, 0.05);
+    }
+
+    .btn-ghost::before {
+      background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+      opacity: 0;
+      filter: blur(12px);
+      transition: 0.4s;
+    }
+
+    .btn-ghost:hover {
+      transform: scale(1.02);
+      border-color: var(--accent-glow);
+      box-shadow: 0 0 30px rgba(219, 189, 158, 0.2), 0 0 60px rgba(219, 189, 158, 0.05);
+    }
+
+    .btn-ghost:hover::before {
+      opacity: 0.5;
+      filter: blur(20px);
+    }
+
+    /* ===== СЕКЦИИ ===== */
+    .section {
+      padding: 32px 24px 40px;
+      margin-bottom: 30px;
+      background: var(--card-bg);
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .section-inner {
+      max-width: 700px;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .section h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+
+    .section-text {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .skill-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(255, 215, 150, 0.03);
+      border-left: 3px solid var(--accent-glow);
+      border-radius: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .skill-value {
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--accent-glow-soft);
+      padding: 4px 16px;
+      border-radius: 40px;
+      font-size: 0.95rem;
+    }
+
+    .work-item {
+      padding: 16px 20px;
+      background: rgba(255, 215, 150, 0.03);
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    .contact-link {
+      display: inline-block;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent-glow);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+      padding: 4px 0;
+      cursor: none;
+    }
+
+    .contact-link:hover {
+      border-bottom-color: var(--accent-glow);
+    }
+
+    /* ===== СЕКЦИЯ "ЛЮБЛЮ" (обновлённая) ===== */
+    .love-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .love-text {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+
+    .love-arrow-down {
+      font-size: 2rem;
+      color: var(--accent-glow);
+      line-height: 1;
+      margin: 2px 0 6px 0;
+    }
+
+    .love-image {
+      max-width: 160px;
+      border-radius: 24px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+
+    .love-image:hover {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 600px) {
+      .love-image {
+        max-width: 130px;
+      }
+    }
+
+    .site-footer {
+      max-width: 1100px;
+      margin: 20px auto 0;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      padding: 20px 0 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* ===== АДАПТИВ ===== */
+    @media (max-width: 720px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 24px 18px 32px;
+      }
+      .hero-visual {
+        min-height: 140px;
+      }
+      .brand {
+        font-size: 2.2rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .site-header {
+        padding: 12px 18px;
+        border-radius: 40px;
+      }
+      .nav a {
+        font-size: 0.85rem;
+        padding: 4px 10px;
+      }
+      .section {
+        padding: 24px 16px 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-cta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn {
+        text-align: center;
+      }
+    }
+
+    /* ===== БЛЁСТКИ ===== */
+    .sparkle-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .sparkle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6e5, #f5d6b0);
+      box-shadow: 0 0 12px 2px rgba(219, 189, 158, 0.7), 0 0 30px 4px rgba(255, 215, 150, 0.3);
+      animation: sparkle-fade 0.25s ease-out forwards;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes sparkle-fade {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.1);
+      }
+    }
+  </style>
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved === "light" || saved === "dark"
+        ? saved
+        : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- Кастомный курсор -->
+  <div class="custom-cursor" id="customCursor"></div>
+
+  <!-- Контейнер для блёсток -->
+  <div class="sparkle-container" id="sparkleContainer"></div>
+
+  <header class="site-header">
+    <a class="logo" href="#top">Дима</a>
+    <div class="header-right">
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#about">О себе</a>
+        <a href="#skills">Умения</a>
+        <a href="#work">Работы</a>
+        <a href="#love">Люблю</a>
+        <a href="#contact">Связь</a>
+      </nav>
+      <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Сменить тему"
+        title="Сменить тему"
+      >
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-base"></div>
+        <div class="hero-sun"></div>
+        <div class="hero-slash"></div>
+        <div class="hero-ring"></div>
+      </div>
+
+      <div class="hero-content">
+        <p class="brand">Дима</p>
+        <p class="location">
+          <svg class="location__icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
+          </svg>
+          <span>Минск</span>
+        </p>
+        <h1>Громко.<br />По делу.</h1>
+        <p class="hero-lead">
+          Одностраничный сайт-визитка. Работы и умения — ниже.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#skills">Смотреть умения</a>
+          <a class="btn btn-ghost" href="#contact">Написать</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="section-inner">
+        <p class="eyebrow">О себе</p>
+        <h2>Дима</h2>
+        <p class="section-text">
+          Люблю отдыхать.
+        </p>
+      </div>
+    </section>
+
+    <section id="skills" class="section skills">
+      <div class="section-inner">
+        <p class="eyebrow">Профиль умений</p>
+        <h2>Что умею</h2>
+        <ul class="skill-list">
+          <li class="skill-item">
+            <span class="skill-label">Умение</span>
+            <span class="skill-value">что-то умею</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="work" class="section work">
+      <div class="section-inner">
+        <p class="eyebrow">Работы</p>
+        <h2>Проекты</h2>
+        <div class="work-item">
+          <p>этот сайт и что-то ещё</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ "ЧТО Я ЛЮБЛЮ" (обновлённая) -->
+    <section id="love" class="section love">
+      <div class="section-inner">
+        <p class="eyebrow">Что я люблю</p>
+        <h2>Что я люблю:</h2>
+        <div class="love-content">
+          <div class="love-text">кушать яблочки</div>
+          <div class="love-arrow-down">↓</div>
+          <img class="love-image" src="apple.jpg" alt="Яблоко" />
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div class="section-inner">
+        <p class="eyebrow">Связь</p>
+        <h2>Как связаться</h2>
+        <a class="contact-link" href="mailto:whyddreamerer@gmail.com">whyddreamerer@gmail.com</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Дима · Минск</p>
+  </footer>
+
+  <script>
+    (function() {
+      const toggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+
+      function setTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      }
+
+      toggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+      });
+    })();
+
+    // ===== КАСТОМНЫЙ КУРСОР =====
+    (function() {
+      const cursor = document.getElementById('customCursor');
+
+      function moveCursor(e) {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      }
+
+      document.addEventListener('mousemove', moveCursor);
+
+      window.addEventListener('beforeunload', () => {
+        document.removeEventListener('mousemove', moveCursor);
+      });
+    })();
+
+    // ===== БЛЁСТКИ (одна частица, очень часто) =====
+    (function() {
+      const container = document.getElementById('sparkleContainer');
+      let lastTime = 0;
+      const delay = 3;
+
+      function createSparkle(x, y) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        const size = 4 + Math.random() * 10;
+        sparkle.style.width = size + 'px';
+        sparkle.style.height = size + 'px';
+        sparkle.style.left = x + 'px';
+        sparkle.style.top = y + 'px';
+        const hue = 30 + Math.random() * 25;
+        sparkle.style.background = `radial-gradient(circle, #fff6e5, hsl(${hue}, 80%, 70%))`;
+        const glow = 6 + Math.random() * 14;
+        sparkle.style.boxShadow = `0 0 ${glow}px 2px rgba(219,189,158,0.6), 0 0 ${glow*2}px 4px rgba(255,215,150,0.2)`;
+        container.appendChild(sparkle);
+
+        setTimeout(() => {
+          if (sparkle.parentNode) sparkle.remove();
+        }, 260);
+      }
+
+      function onMouseMove(e) {
+        const now = performance.now();
+        if (now - lastTime < delay) return;
+        lastTime = now;
+
+        const x = e.clientX;
+        const y = e.clientY;
+        createSparkle(x, y);
+      }
+
+      document.addEventListener('mousemove', onMouseMove);
+
+      window.addEventListener('beforeunload', () => {
+        document.removeEventListener('mousemove', onMouseMove);
+      });
+    })();
+  </script>
+</body>
+</html>
